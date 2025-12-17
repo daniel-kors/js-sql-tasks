@@ -8,5 +8,19 @@ const config = {
 };
 
 // BEGIN (write your solution here)
+export default async (articles) => {
+  const sql = postgres(config);
 
+  try {
+    const result = await sql`
+      INSERT INTO articles ${sql(articles, 'title', 'description')}
+      RETURNING id
+    `;
+
+    return result.map(row => row.id);
+
+  } finally {
+    await sql.end();
+  }
+};
 // END
